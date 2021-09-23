@@ -109,11 +109,11 @@ public class RegisterFragment extends Fragment {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            Log.d(TAG, "addProfile Successful: ");
+                            Log.d(TAG, "addUser Successful: ");
                             NavHostFragment.findNavController(RegisterFragment.this)
                                     .navigate(R.id.register_signIn_action);
                         } else {
-                            Log.d(TAG, "addProfile notSuccessful: " + task.getException().getMessage());
+                            Log.d(TAG, "addUser notSuccessful: " + task.getException().getMessage());
                             task.getException().printStackTrace();
                         }
                     }

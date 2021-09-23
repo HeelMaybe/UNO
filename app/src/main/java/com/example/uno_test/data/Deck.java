@@ -58,7 +58,26 @@ public class Deck {
         return cardsInDeck == 0;
     }
 
+    public Card[] getCards() {
+        return cards;
+    }
 
+    public ArrayList<Card> getCardsList() {
+        return cardsList;
+    }
+    public void shuffle() {
+        cardsList.clear();
+        int n = cards.length;
+        Random random = new Random();
+        for (int i = 0; i < cards.length; i++) {
+            int randomValue = i + random.nextInt(n - i);
+            Card randomCard = cards[randomValue];
+            cards[randomValue] = cards[i];
+            cards[i] = randomCard;
+            cardsList.add(cards[i]);
+        }
+
+    }
 
 }
 
