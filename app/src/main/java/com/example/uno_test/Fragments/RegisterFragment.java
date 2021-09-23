@@ -20,6 +20,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class RegisterFragment extends Fragment {
     private FirebaseAuth mAuth;
@@ -69,10 +73,7 @@ public class RegisterFragment extends Fragment {
                                     if (task.isSuccessful()) {
                                         Log.d(TAG, "onComplete: Signed up Successfully");
                                             //TODO: save name of user to firestore with viewmodels
-                                        NavHostFragment.findNavController(RegisterFragment.this)
-                                                .navigate(R.id.register_signIn_action);
-
-
+                                       addUser(name);
                                     } else {
                                         Log.d(TAG, "onComplete: Error!!!");
                                         Log.d(TAG, "onComplete: " + task.getException().getMessage());
@@ -93,6 +94,30 @@ public class RegisterFragment extends Fragment {
                         .navigate(R.id.cancel_signup_action);
             }
         });
+    }
+
+
+    private void addUser(String name){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        Map<String, String > user = new HashMap<>();
+        user.put("name", name);
+        user.put("id", mAuth.getCurrentUser().getUid());
+        db.collection("users")
+                .document(mAuth.getUid())
+                .set(user)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "addProfile Successful: ");
+                            NavHostFragment.findNavController(RegisterFragment.this)
+                                    .navigate(R.id.register_signIn_action);
+                        } else {
+                            Log.d(TAG, "addProfile notSuccessful: " + task.getException().getMessage());
+                            task.getException().printStackTrace();
+                        }
+                    }
+                });
     }
 }
 
