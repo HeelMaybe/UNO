@@ -4,22 +4,18 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.uno_test.R;
-import com.google.android.gms.tasks.OnSuccessListener;
-
-import java.util.Date;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link GameFragment#newInstance} factory method to
+ * Use the {@link CreateGameFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class GameFragment extends Fragment {
+public class CreateGameFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -30,7 +26,7 @@ public class GameFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public GameFragment() {
+    public CreateGameFragment() {
         // Required empty public constructor
     }
 
@@ -40,11 +36,11 @@ public class GameFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment GameFragment.
+     * @return A new instance of fragment CreateGameFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static GameFragment newInstance(String param1, String param2) {
-        GameFragment fragment = new GameFragment();
+    public static CreateGameFragment newInstance(String param1, String param2) {
+        CreateGameFragment fragment = new CreateGameFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -65,19 +61,6 @@ public class GameFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_game, container, false);
+        return inflater.inflate(R.layout.fragment_create_game, container, false);
     }
-//    private void registerPresence() {
-//        chatRoom.presence.put(loggedUserId, new Date());
-//
-//        db.collection("rooms")
-//                .document(roomId)
-//                .update("presence", chatRoom.presence)
-//                .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                    @Override
-//                    public void onSuccess(Void unused) {
-//                        Log.d("CRDebug", "Presence updated successfully");
-//                    }
-//                });
-//    }
 }

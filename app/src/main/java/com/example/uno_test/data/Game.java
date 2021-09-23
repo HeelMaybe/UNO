@@ -1,18 +1,22 @@
 package com.example.uno_test.data;
 
 import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
 
-public class Board {
+public class Game {
     private static final String TAG = "demo";
     private Card[] cardsInMiddle = new Card[108];
     private Player playerOne;
     private Player playerTwo;
     private Player[]players = new Player[2];
+    public HashMap<String, Date> presence = new HashMap<>();
 
-    public Board() {
+
+    public Game() {
     }
 
-    public Board(Card[] cardsInMiddle, Player playerOne, Player playerTwo,Player[] players) {
+    public Game(Card[] cardsInMiddle, Player playerOne, Player playerTwo, Player[] players) {
         this.cardsInMiddle = cardsInMiddle;
         this.playerOne = playerOne;
         this.playerTwo = playerTwo;

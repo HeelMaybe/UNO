@@ -7,12 +7,8 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import android.os.Bundle;
-import android.util.Log;
 
 import com.example.uno_test.R;
-import com.example.uno_test.data.Board;
-import com.example.uno_test.data.Deck;
-import com.example.uno_test.data.Player;
 import com.example.uno_test.databinding.ActivityMainBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
