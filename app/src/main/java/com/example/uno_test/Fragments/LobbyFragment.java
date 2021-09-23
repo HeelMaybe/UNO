@@ -45,6 +45,15 @@ public class LobbyFragment extends Fragment {
                         .navigate(R.id.lobby_to_auth_action);
             }
         });
+
+        binding.buttonGame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NavHostFragment.findNavController(LobbyFragment.this)
+                        .navigate(R.id.lobby2game_action);
+            }
+        });
+
     }
 
 //    @Override
