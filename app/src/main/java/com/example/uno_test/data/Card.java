@@ -1,9 +1,10 @@
 package com.example.uno_test.data;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Objects;
 
-public class Card  {
+public class Card implements Serializable {
 
     enum Color {
         Red,Blue,Green, Yellow, Wild;

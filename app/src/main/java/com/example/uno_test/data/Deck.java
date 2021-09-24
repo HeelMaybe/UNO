@@ -13,9 +13,7 @@ public class Deck {
 
     private Card[] cards;
     private ArrayList<Card> cardsList;
-
     private int cardsInDeck;
-
     public Deck() {
         cards = new Card[108];
     }

@@ -16,7 +16,7 @@
             android:id="@+id/lobby2game_action"
             app:destination="@id/gameFragment" />
         <action
-            android:id="@+id/action_lobbyFragment_to_createGameFragment"
+            android:id="@+id/lobby_to_create_action"
             app:destination="@id/createGameFragment" />
     </fragment>
     <activity
@@ -33,9 +33,5 @@
         android:id="@+id/createGameFragment"
         android:name="com.example.uno_test.Fragments.CreateGameFragment"
         android:label="fragment_create_game"
-        tools:layout="@layout/fragment_create_game" >
-        <action
-            android:id="@+id/action_createGameFragment_to_gameFragment"
-            app:destination="@id/gameFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_create_game" />
 </navigation>

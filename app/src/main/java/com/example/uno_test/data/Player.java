@@ -5,6 +5,20 @@ import java.util.Arrays;
 public class Player {
     private String playerName;
     private Card[] playerCards;
+    private String playerId;
+
+    public String getPlayerId() {
+        return playerId;
+    }
+
+    public void setPlayerId(String playerId) {
+        this.playerId = playerId;
+    }
+
+    public Player() {
+
+    }
+
 
     public String getPlayerName() {
         return playerName;
