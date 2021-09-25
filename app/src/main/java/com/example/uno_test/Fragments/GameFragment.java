@@ -35,6 +35,7 @@ public class GameFragment extends Fragment {
     private FirebaseAuth mAuth;
     final private String TAG = "demo";
     Deck deckModel;
+    FirebaseFirestore db;
     public GameFragment() {
         // Required empty public constructor
     }
@@ -44,6 +45,7 @@ public class GameFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
         deckModel = new Deck();
         uno = new Game();
     }
@@ -74,7 +76,6 @@ public class GameFragment extends Fragment {
     }
 
     private void addDeckWithMaps() {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
         initDeck();
         Map<String, Map> deck = new HashMap<>();
         Map<String, Map> cards = new HashMap<>();
@@ -104,7 +105,6 @@ public class GameFragment extends Fragment {
                 });
     }
     private void addDeckWithArray() {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
         initDeck();
         Map<String, Map> deck = new HashMap<>();
 
@@ -125,7 +125,6 @@ public class GameFragment extends Fragment {
     }
 
     private void getCurrentTopCard(){
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         db.collection("deck")
                 .document(mAuth.getUid())
@@ -150,7 +149,6 @@ public class GameFragment extends Fragment {
     }
 
     private void setPlayer2Name(){
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("users")
                 .document(mAuth.getCurrentUser().getUid())
                 .get()

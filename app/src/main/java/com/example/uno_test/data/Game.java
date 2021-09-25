@@ -27,11 +27,12 @@ public class Game implements Serializable {
 
     public Game(String id, String ownerName,String ownerId, String title,Player player1) {
         this.id = id;
-        this.ownerId = ownerId;
         this.ownerName = ownerName;
+        this.ownerId = ownerId;
         this.title = title;
-        this.createdAt = new Date();
         this.playerOne = player1;
+        this.createdAt = new Date();
+
     }
 
     public String getId() {

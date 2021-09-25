@@ -59,7 +59,7 @@ public class CreateGameFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String title = binding.etTitle.getText().toString();
-                Game newGame = new Game(ownerId,ownerId,creatorName,title,currentPlayer);
+                Game newGame = new Game(ownerId,creatorName,ownerId,title,currentPlayer);
                 createGame(newGame);
             }
         });

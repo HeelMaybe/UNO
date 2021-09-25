@@ -53,7 +53,7 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
     public void onBindViewHolder(GameViewHolder holder, int position) {
         PrettyTime prettyTime = new PrettyTime();
         Game game = Games.get(position);
-        holder.tvGameName.setText(game.title);
+        holder.tvGameName.setText(game.ownerName + " : " +game.title );
         holder.tvCreatedAt.setText(prettyTime.format(game.createdAt));
         holder.root.setOnClickListener(new View.OnClickListener() {
             @Override
