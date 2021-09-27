@@ -26,7 +26,7 @@
         tools:layout="@layout/activity_auth" />
     <fragment
         android:id="@+id/gameFragment"
-        android:name="com.example.uno_test.Fragments.GameFragment"
+        android:name="com.example.uno_test.data.GameFragment"
         android:label="fragment_game"
         tools:layout="@layout/fragment_game" />
     <fragment

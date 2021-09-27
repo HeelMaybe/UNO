@@ -12,7 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.uno_test.R;
+import com.example.uno_test.data.Card;
+import com.example.uno_test.data.Deck;
 import com.example.uno_test.data.Game;
 import com.example.uno_test.data.Player;
 import com.example.uno_test.databinding.FragmentCreateGameBinding;
@@ -25,12 +26,18 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.WriteBatch;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class CreateGameFragment extends Fragment {
     private static final String TAG = "demo";
 
     private FragmentCreateGameBinding binding;
+    Deck deckModel;
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     Player currentPlayer;
@@ -40,6 +47,8 @@ public class CreateGameFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         currentPlayer = new Player();
+        deckModel = new Deck();
+
     }
 
     @Override
@@ -59,7 +68,7 @@ public class CreateGameFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String title = binding.etTitle.getText().toString();
-                Game newGame = new Game(ownerId,creatorName,ownerId,title,currentPlayer);
+                Game newGame = new Game(ownerId,creatorName,ownerId,title);
                 createGame(newGame);
             }
         });
@@ -87,14 +96,47 @@ public class CreateGameFragment extends Fragment {
             }
         });
     }
+    private void initDeck(){
+        deckModel.initialize();
+        //deckModel.shuffle();
+    }
+    private void addDeckWithArrayList() {
+        initDeck();
+        ArrayList<Card> cards = deckModel.getCardsList();
+        WriteBatch batch = db.batch();
+        for (int i = 0; i < cards.size(); i++) {
+            DocumentReference card = db.collection("games").document(mAuth.getCurrentUser().getUid()).collection("deck").document(String.valueOf(i));
+            batch.set(card, cards.get(i));
+        }
+        // Commit the batch
+        batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    Log.d(TAG, "isSuccessful: ");
+                }
+            }
+        });
+    }
+    private void addPlayer1(){
+        Map<String,String> name = new HashMap<>();
+        name.put("name",currentPlayer.getPlayerName());
+         db.collection("games")
+                 .document(mAuth.getCurrentUser().getUid())
+                 .collection("players")
+                 .document(currentPlayer.getPlayerId())
+                 .set(name);
+    }
 
     private void createGame(Game game){
         db.collection("games")
-                .add(game)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                .document(mAuth.getCurrentUser().getUid())
+                .set(game)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
+                    public void onSuccess(Void unused) {
+                        addDeckWithArrayList();
+                        addPlayer1();
                         NavHostFragment.findNavController(CreateGameFragment.this)
                                 .popBackStack();
                     }

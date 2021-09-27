@@ -4,7 +4,6 @@ import java.util.Arrays;
 
 public class Player {
     private String playerName;
-    private Card[] playerCards;
     private String playerId;
 
     public String getPlayerId() {
@@ -28,13 +27,7 @@ public class Player {
         this.playerName = playerName;
     }
 
-    public Card[] getPlayerCards() {
-        return playerCards;
-    }
 
-    public void setPlayerCards(Card[] playerCards) {
-        this.playerCards = playerCards;
-    }
 
     public Player(String playerName) {
         this.playerName = playerName;
@@ -44,7 +37,7 @@ public class Player {
     public String toString() {
         return "Player{" +
                 "playerName='" + playerName + '\'' +
-                ", playerCards=" + Arrays.toString(playerCards) +
+                ", playerCards=" +
                 '}';
     }
 }

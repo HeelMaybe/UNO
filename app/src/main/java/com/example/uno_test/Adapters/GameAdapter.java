@@ -20,11 +20,17 @@ import java.util.List;
 public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder> {
     private List<Game> Games;
     private IGameRow callback;
+    private String gameId;
+    private String loggedUserId;
+
+
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    public GameAdapter(List<Game> myDataset, IGameRow callback) {
+    public GameAdapter(String currentUserId,String currentGameId,  List<Game> myDataset, IGameRow callback) {
         Games = myDataset;
         this.callback = callback;
+        loggedUserId = currentUserId;
+        gameId = currentGameId;
     }
 
     public static class GameViewHolder extends RecyclerView.ViewHolder{
@@ -41,12 +47,11 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
         }
     }
 
-
     @Override
     public GameViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_games, parent, false);
-        GameViewHolder userViewHolder = new GameViewHolder(view);
-        return userViewHolder;
+        GameViewHolder gameViewHolder = new GameViewHolder(view);
+        return gameViewHolder;
     }
 
     @Override

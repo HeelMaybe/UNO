@@ -12,6 +12,7 @@ public class Card implements Serializable {
         public static Color getColor(int i){
             return Color.colors[i];
         }
+
     }
     enum Value {
         zero,one,two,three,four,five,six,seven,eight,nine,DrawTwo,Skip,Reverse,Wild,WildFour;
@@ -19,6 +20,7 @@ public class Card implements Serializable {
         public static Value getValue(int i){
             return Value.values[i];
         }
+
     }
 
     private final Color color;
@@ -29,6 +31,7 @@ public class Card implements Serializable {
         this.color = color;
         this.value = value;
     }
+
 
     public Color getColor() {
         return color;

@@ -12,13 +12,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.uno_test.Adapters.GameAdapter;
 import com.example.uno_test.R;
 import com.example.uno_test.data.Game;
+import com.example.uno_test.data.GameFragment;
 import com.example.uno_test.databinding.FragmentLobbyBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.EventListener;
@@ -28,7 +28,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 
@@ -99,7 +98,7 @@ public class LobbyFragment extends Fragment {
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL);
         recyclerView.addItemDecoration(dividerItemDecoration);
 
-        mAdapter = new GameAdapter(games, new GameAdapter.IGameRow() {
+        mAdapter = new GameAdapter(mAuth.getUid(),mAuth.getUid() ,games, new GameAdapter.IGameRow() {
             @Override
             public void onGameSelected(Game game) {
 
@@ -107,7 +106,7 @@ public class LobbyFragment extends Fragment {
                 args.putString(GameFragment.GAME_KEY, game.id);
                 args.putString(GameFragment.GAME_TITLE, game.title);
 
-                    TODO: NavHostFragment.findNavController(LobbyFragment.this)
+                NavHostFragment.findNavController(LobbyFragment.this)
                                         .navigate(R.id.lobby2game_action, args);
             }
         });
