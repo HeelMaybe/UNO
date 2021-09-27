@@ -6,51 +6,48 @@ import java.util.Objects;
 
 public class Card implements Serializable {
 
-    enum Color {
-        Red,Blue,Green, Yellow, Wild;
-        private static final Color[] colors = Color.values();
-        public static Color getColor(int i){
-            return Color.colors[i];
+    String color, type;
+
+    public Card(String firebaseCard) {
+        String[] items = firebaseCard.split("-");
+        for (String item : items) {
+            item.replaceAll("[(){}]","");
         }
-
-    }
-    enum Value {
-        zero,one,two,three,four,five,six,seven,eight,nine,DrawTwo,Skip,Reverse,Wild,WildFour;
-        private static final Value[] values = Value.values();
-        public static Value getValue(int i){
-            return Value.values[i];
+        if(items.length == 2){
+            color = items[0];
+            type = items[1];
+        } else if (items.length == 1){
+            type = items[0]; //DRAW4
+            color = "BLACK";
         }
-
     }
 
-    private final Color color;
-
-    private final Value value;
-
-    public Card(final Color color,final Value value) {
-        this.color = color;
-        this.value = value;
+    public boolean canPlayCard(Card topCard){
+        if(this.color.equals(topCard.color)){
+            return true;
+        } else if(this.type.equals(topCard.type)){
+            return true;
+        } else if(this.type.equals("DRAW4")){
+            return true;
+        } else if(topCard.type.equals("DRAW4")){
+            return true;
+        }
+        return false;
     }
 
-
-    public Color getColor() {
+    public String getColor() {
         return color;
     }
 
-    public Value getValue() {
-        return value;
+    public void setColor(String color) {
+        this.color = color;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(color, value);
+    public String getType() {
+        return type;
     }
 
-    @Override
-    public String toString() {
-        return "Card{" +
-                "color=" + color +
-                ", value=" + value +
-                '}';
+    public void setType(String type) {
+        this.type = type;
     }
 }

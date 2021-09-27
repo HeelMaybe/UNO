@@ -103,7 +103,7 @@ public class LobbyFragment extends Fragment {
             public void onGameSelected(Game game) {
 
                 Bundle args = new Bundle();
-                args.putString(GameFragment.GAME_KEY, game.id);
+                args.putString(GameFragment.GAME_KEY, game.gameId);
                 args.putString(GameFragment.GAME_TITLE, game.title);
 
                 NavHostFragment.findNavController(LobbyFragment.this)
@@ -121,19 +121,11 @@ public class LobbyFragment extends Fragment {
                     Log.w("CRDebug", "Listen failed.", e);
                     return;
                 }
-
                 games.clear();
                 for (QueryDocumentSnapshot doc : value) {
                     Game game = doc.toObject(Game.class);
-                    game.setId(doc.getId());
                     games.add(game);
                 }
-//                games.sort(new Comparator<Game>() {
-//                    @Override
-//                    public int compare(Game o1, Game o2) {
-//                        return o2.createdAt.compareTo(o1.createdAt);
-//                    }
-//                });
                 mAdapter.notifyDataSetChanged();
             }
         });

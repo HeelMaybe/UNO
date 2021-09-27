@@ -14,10 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.uno_test.Adapters.DeckAdapter;
-import com.example.uno_test.data.Card;
-import com.example.uno_test.data.Deck;
-import com.example.uno_test.data.Game;
-import com.example.uno_test.data.Player;
 import com.example.uno_test.databinding.FragmentGameBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -25,17 +21,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
-import com.google.firebase.firestore.WriteBatch;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class GameFragment extends Fragment {
@@ -54,7 +44,6 @@ public class GameFragment extends Fragment {
     Game uno;
     private FirebaseAuth mAuth;
     final private String TAG = "demo";
-    Deck deckModel;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public GameFragment() {
@@ -67,7 +56,6 @@ public class GameFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         uno = new Game();
         db = FirebaseFirestore.getInstance();
-        deckModel = new Deck();
     }
 
     @Override
@@ -110,7 +98,6 @@ public class GameFragment extends Fragment {
         rvaCards = new DeckAdapter(cards, new DeckAdapter.ICardRow() {
             @Override
             public void onCardSelected(Card card) {
-                Log.d(TAG, "onCardSelected: card:" + card.getColor().toString() +"," + card.getValue().toString());
             }
         });
         rvCards.setAdapter(rvaCards);
@@ -119,120 +106,26 @@ public class GameFragment extends Fragment {
 
     private void getCards(){
         cards.clear();
-        for (int i = 0; i<7;i++){
             db.collection("games")
                     .document(gameId)
-                    .collection("deck")
-                    .document(String.valueOf(i))
                     .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
-                public void onSuccess(DocumentSnapshot doc) {
-                    Card card = new Card(Card.Color.valueOf(doc.get("color").toString()), Card.Value.valueOf(doc.get("value").toString()));
-                    Log.d(TAG, "getCards Card: "+doc.get("color").toString()+","+ doc.get("value").toString() );
-                    cards.add(card);
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    Log.d(TAG, "onSuccess: player1CardsDeck:"+ documentSnapshot.get("player1CardsDeck").toString() );
+                    String arrayOfCards = documentSnapshot.get("player1CardsDeck").toString();
+                    String result = arrayOfCards.replaceAll("[(){}]","");
+                    Log.d(TAG, "onSuccess: player1CardsDeck result:"+ result );
+
+                    String[] items = result.split(", ");
+                    for (int i = 0; i<items.length;i++){
+                        Card card = new Card(items[i]);
+                        cards.add(card);
+                    }
+                    rvaCards.notifyDataSetChanged();
                 }
             });
-        }
-        rvaCards.notifyDataSetChanged();
+
+
 
     }
-    private void drawCard(){
-
-    }
-
-
-
-
-
-
-
-
-
-
-    private void getGame(){
-        DocumentReference docRef = db.collection("games").document(gameId);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()){
-                    DocumentSnapshot document = task.getResult();
-                    if(document.exists()){
-                        uno = document.toObject(Game.class);
-                    }else{
-                        Log.d(TAG, "No such document");
-                    }
-                }else {
-                    Log.d(TAG, "get failed with ", task.getException());
-                }
-            }
-        });
-
-    }
-    private void getCurrentTopCard(){
-
-        db.collection("games")
-                .document(mAuth.getCurrentUser().getUid())
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()) {
-
-                    } else {
-                        Log.d(TAG, "No such document");
-                    }
-                } else {
-                    Log.d(TAG, "getCurrentTopCard notSuccessful: " + task.getException().getMessage());
-                    task.getException().printStackTrace();
-                }
-            }
-        });
-    }
-
-    private void setPlayer2Name(){
-        db.collection("users")
-                .document(mAuth.getCurrentUser().getUid())
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()){
-                    String name = task.getResult().getString("name");
-                    Player one = new Player(name);
-                    Map<String ,String> playerMap = new HashMap<>();
-                    playerMap.put("setPlayer2Name",one.getPlayerName());
-                    db.collection("games")
-                            .document("game1")
-                            .set(playerMap, SetOptions.merge())
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        Log.d(TAG, "setPlayer2Name Successful: ");
-                                    } else {
-                                        Log.d(TAG, "setPlayer2Name notSuccessful: " + task.getException().getMessage());
-                                        task.getException().printStackTrace();
-                                    }
-                                }
-                            });
-                }
-            }
-        });
-    }
-
-    //    private void registerPresence() {
-//        chatRoom.presence.put(loggedUserId, new Date());
-//
-//        db.collection("rooms")
-//                .document(roomId)
-//                .update("presence", chatRoom.presence)
-//                .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                    @Override
-//                    public void onSuccess(Void unused) {
-//                        Log.d("CRDebug", "Presence updated successfully");
-//                    }
-//                });
-//    }
 }

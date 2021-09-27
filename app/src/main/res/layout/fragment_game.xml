@@ -21,7 +21,7 @@
         android:id="@+id/rvCards"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="500dp"
+        android:layout_marginTop="400dp"
         android:scrollbars="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -18,13 +18,13 @@ public class DeckAdapter extends RecyclerView.Adapter<DeckAdapter.DeckViewHolder
     ArrayList<Card> cards = new ArrayList<>();
     private ICardRow callback;
 
-    public DeckAdapter(ArrayList<Card> cards,ICardRow callback){
+    public DeckAdapter(ArrayList<Card> cards, ICardRow callback) {
         this.cards = cards;
         this.callback = callback;
 
     }
 
-    public static class DeckViewHolder extends RecyclerView.ViewHolder{
+    public static class DeckViewHolder extends RecyclerView.ViewHolder {
         public Context context;
         public View root;
         public TextView tvCardValue;
@@ -49,9 +49,17 @@ public class DeckAdapter extends RecyclerView.Adapter<DeckAdapter.DeckViewHolder
     @Override
     public void onBindViewHolder(@NonNull DeckViewHolder holder, int position) {
         Card card = cards.get(position);
-        String value =  String.valueOf(card.getValue());
+        String type = card.getType();
+        String color = card.getColor();
+
         //TODO: change background color when
-        holder.tvCardValue.setText(value);
+        holder.tvCardValue.setText(color + " " + type);
+        holder.root.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callback.onCardSelected(card);
+            }
+        });
 
     }
 
@@ -59,9 +67,6 @@ public class DeckAdapter extends RecyclerView.Adapter<DeckAdapter.DeckViewHolder
     public int getItemCount() {
         return cards.size();
     }
-
-
-
 
     public interface ICardRow {
         void onCardSelected(Card card);
