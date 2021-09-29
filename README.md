@@ -2,7 +2,7 @@
 This app is the first individual project for the class **ITIS 5280** at UNCC, made by Graham Helton. It consists of a Mobile Application to play UNO, with support of:
 - Authentication with your email
 - Real-time playing with people using the app
-- Create gamesrooms
+- Create games
 - See who's turn it is
 - See who wins the game
 
