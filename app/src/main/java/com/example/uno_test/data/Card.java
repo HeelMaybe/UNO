@@ -25,19 +25,19 @@ public class Card implements Serializable {
         }
     }
 
-    public boolean canPlayCard(String topCard){
+    public boolean canPlayCard(String topCard) {
         String[] items = topCard.split("-");
 
-        if(this.color.equals(items[0])){
+        if (this.color.equals(items[0])) {
             Log.d(TAG, "canPlayCard same color: true ");
             return true;
-        } else if(this.type.equals(items[1])){
+        } else if (this.type.equals(items[1])) {
             Log.d(TAG, "canPlayCard same type: true ");
             return true;
-        } else if(this.type.equals("DRAW4")){
+        } else if (this.type.equals("DRAW4")) {
             Log.d(TAG, "canPlayCard DRAW4: true ");
             return true;
-        } else if(items[0].equals("BLACK")){
+        } else if (items[0].equals("BLACK")) {
             Log.d(TAG, "canPlayCard played DRAW4: true ");
             return true;
         }
