@@ -271,12 +271,7 @@ public class GameFragment extends Fragment {
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
-                                docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                                        Draw4CardsFromDeck(value,player1Cards,rvaCards);
-                                    }
-                                });
+                                rvaCards.notifyDataSetChanged();
                             }
                         });
             }
@@ -286,7 +281,6 @@ public class GameFragment extends Fragment {
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
-
                                 rvaCards.notifyDataSetChanged();
                             }
                         });
@@ -310,13 +304,7 @@ public class GameFragment extends Fragment {
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
-                                docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
-                                        Draw4CardsFromDeck(value,player2Cards,rvaCards2);
-                                    }
-                                });
-
+                                rvaCards.notifyDataSetChanged();
                             }
                         });
             }
@@ -393,7 +381,7 @@ public class GameFragment extends Fragment {
                 db.collection("games").document(gameId).update("player2CardsDeck", FieldValue.arrayUnion(card.getColor()+"-"+card.getType()));
                 playerCards.add(card);
                 adapter.notifyDataSetChanged();
-                docRef.update("whosTurn",1);
+                docRef.update("whosTurn",3);
             }
         }
     }
@@ -414,11 +402,9 @@ public class GameFragment extends Fragment {
                 if (value.get("whosTurn").equals(1)) {
                     db.collection("games").document(gameId).update("player1CardsDeck", FieldValue.arrayUnion(card.getColor()+"-"+card.getType()));
                     playerCards.add(card);
-                    docRef.update("whosTurn",2);
                 } else if (value.get("whosTurn").equals(2)) {
                     db.collection("games").document(gameId).update("player2CardsDeck", FieldValue.arrayUnion(card.getColor()+"-"+card.getType()));
                     playerCards.add(card);
-                    docRef.update("whosTurn",1);
                 }
             }
         }
