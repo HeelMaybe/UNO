@@ -12,7 +12,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.uno_test.R;
 import com.example.uno_test.data.Game;
+import com.example.uno_test.data.GameFragment;
 import com.example.uno_test.data.Player;
 import com.example.uno_test.databinding.FragmentCreateGameBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -79,8 +81,12 @@ public class CreateGameFragment extends Fragment {
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void unused) {
+                                        Bundle args = new Bundle();
+                                        args.putString(GameFragment.GAME_KEY, newGame.gameId);
+                                        args.putString(GameFragment.GAME_TITLE, newGame.title);
+
                                         NavHostFragment.findNavController(CreateGameFragment.this)
-                                                .popBackStack();
+                                                .navigate(R.id.create2game_action, args);
                                     }
                                 })
                                 .addOnFailureListener(new OnFailureListener() {

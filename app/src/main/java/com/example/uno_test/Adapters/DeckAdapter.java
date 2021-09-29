@@ -1,12 +1,14 @@
 package com.example.uno_test.Adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.uno_test.R;
@@ -28,13 +30,14 @@ public class DeckAdapter extends RecyclerView.Adapter<DeckAdapter.DeckViewHolder
         public Context context;
         public View root;
         public TextView tvCardValue;
+        public CardView cardView;
 
         public DeckViewHolder(@NonNull View itemView) {
             super(itemView);
             context = itemView.getContext();
             root = itemView.findViewById(R.id.lytColumn);
             tvCardValue = itemView.findViewById(R.id.tvCardNumber);
-
+            cardView = itemView.findViewById(R.id.cardview);
         }
     }
 
@@ -50,10 +53,25 @@ public class DeckAdapter extends RecyclerView.Adapter<DeckAdapter.DeckViewHolder
     public void onBindViewHolder(@NonNull DeckViewHolder holder, int position) {
         Card card = cards.get(position);
         String type = card.getType();
-        String color = card.getColor();
+        holder.tvCardValue.setText(type);
+        if(card.getType().equals("SKIP")){
+            holder.tvCardValue.setText(type);
+        }else if(card.getType().equals("DRAW4")){
+            holder.tvCardValue.setText("+4");
+        }
 
-        //TODO: change background color when
-        holder.tvCardValue.setText(color + " " + type);
+        if(card.getColor().equals("RED")){
+            holder.cardView.setCardBackgroundColor(Color.RED);
+        }else if(card.getColor().equals("GREEN")){
+            holder.cardView.setCardBackgroundColor(Color.GREEN);
+        }else if(card.getColor().equals("YELLOW")){
+            holder.cardView.setCardBackgroundColor(Color.YELLOW);
+        }else if(card.getColor().equals("BLUE")){
+            holder.cardView.setCardBackgroundColor(Color.BLUE);
+        }else if(card.getType().equals("DRAW4")){
+            holder.cardView.setCardBackgroundColor(Color.BLACK);
+        }
+
         holder.root.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

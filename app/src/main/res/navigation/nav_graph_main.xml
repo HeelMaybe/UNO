@@ -33,5 +33,9 @@
         android:id="@+id/createGameFragment"
         android:name="com.example.uno_test.Fragments.CreateGameFragment"
         android:label="fragment_create_game"
-        tools:layout="@layout/fragment_create_game" />
+        tools:layout="@layout/fragment_create_game" >
+        <action
+            android:id="@+id/create2game_action"
+            app:destination="@id/gameFragment" />
+    </fragment>
 </navigation>

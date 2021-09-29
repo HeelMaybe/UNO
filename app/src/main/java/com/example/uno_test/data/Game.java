@@ -61,10 +61,10 @@ public class Game implements Serializable {
         Collections.shuffle(floorCardsDeck);
         currentCard = floorCardsDeck.remove(0);
 
-        this.floorCardsDeck.add("DRAW4");
-        this.floorCardsDeck.add("DRAW4");
-        this.floorCardsDeck.add("DRAW4");
-        this.floorCardsDeck.add("DRAW4");
+        this.floorCardsDeck.add("BLACK-"+"DRAW4");
+        this.floorCardsDeck.add("BLACK-"+"DRAW4");
+        this.floorCardsDeck.add("BLACK-"+"DRAW4");
+        this.floorCardsDeck.add("BLACK-"+"DRAW4");
 
         this.floorCardsDeck.add("RED-" + "SKIP");
         this.floorCardsDeck.add("RED-" + "SKIP");
