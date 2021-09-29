@@ -24,7 +24,7 @@ The main collections in the database are the following:
 |Collection Name |Description                    		 |Properties				   |
 |----------------|---------------------------------------|-------------------------------------------------------------------------------|
 |`users`		 |Information of the users       		 | `Name`, `id`|
-|`{GameId}.game`|Information of the game		     | `createdAt`, `currentCard`, `floorCardsDeck`, `gameId`, `player1CardsDeck`, `player2CardsDeck`,`player1Id`, `player1Name`, `player2Id`, `player2Name`, `status`, `whosTurn`|
+|`{games}.gameId`|Information of the game		     | `createdAt`, `currentCard`, `floorCardsDeck`, `gameId`, `player1CardsDeck`, `player2CardsDeck`,`player1Id`, `player1Name`, `player2Id`, `player2Name`, `status`, `whosTurn`|
 
 ## External Resources
 - Video explaining the app: 
