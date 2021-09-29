@@ -197,6 +197,8 @@ public class GameFragment extends Fragment {
                         binding.tvPlayerTurn.setText(uno.player2Name +"'s turn");
                         rvCards2.setClickable(true);
                     }
+                    isGameFinished();
+
 
 
                     binding.buttonDrawCard.setOnClickListener(new View.OnClickListener() {
@@ -212,7 +214,12 @@ public class GameFragment extends Fragment {
                             }
                         }
                     });
-
+                        //TODO: fix draw four method
+//                    if(value.get("currentCard").equals("BLACK-DRAW4")&&uno.whosTurn == 1){
+//                        Draw4CardsFromDeck(value,player2Cards,rvaCards2);
+//                    }else if(value.get("currentCard").equals("BLACK-DRAW4")&&uno.whosTurn == 2){
+//                        Draw4CardsFromDeck(value,player1Cards,rvaCards);
+//                    }
 
                     upDateCurrentCard(value.get("currentCard").toString());
                     updatePlayer2();
@@ -385,6 +392,7 @@ public class GameFragment extends Fragment {
             }
         }
     }
+
     private void Draw4CardsFromDeck(DocumentSnapshot value,ArrayList<Card> playerCards,DeckAdapter adapter){
         //get floor deck
         String arrayOfCards = value.get("floorCardsDeck").toString();
@@ -400,16 +408,29 @@ public class GameFragment extends Fragment {
                 docRef.update("floorCardsDeck", FieldValue.arrayRemove(card.getColor() + "-" + card.getType()));
                 playerCards.add(card);
                 if (value.get("whosTurn").equals(1)) {
-                    db.collection("games").document(gameId).update("player1CardsDeck", FieldValue.arrayUnion(card.getColor()+"-"+card.getType()));
-                    playerCards.add(card);
-                } else if (value.get("whosTurn").equals(2)) {
                     db.collection("games").document(gameId).update("player2CardsDeck", FieldValue.arrayUnion(card.getColor()+"-"+card.getType()));
                     playerCards.add(card);
+                    docRef.update("whosTurn",2);
+                } else if (value.get("whosTurn").equals(2)) {
+                    db.collection("games").document(gameId).update("player1CardsDeck", FieldValue.arrayUnion(card.getColor()+"-"+card.getType()));
+                    playerCards.add(card);
+                    docRef.update("whosTurn",1);
                 }
             }
         }
         adapter.notifyDataSetChanged();
     }
+
+    private boolean isGameFinished(){
+        if(player1Cards.size() == 0 || player2Cards.size() == 0) {
+            DocumentReference docRef = db.collection("games").document(gameId);
+            docRef.update("status", "FINISHED");
+            return true;
+        }else {
+            return false;
+        }
+    }
+
 
 
 }
