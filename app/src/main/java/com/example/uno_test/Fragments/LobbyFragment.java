@@ -18,7 +18,6 @@ import android.view.ViewGroup;
 import com.example.uno_test.Adapters.GameAdapter;
 import com.example.uno_test.R;
 import com.example.uno_test.data.Game;
-import com.example.uno_test.data.GameFragment;
 import com.example.uno_test.databinding.FragmentLobbyBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.EventListener;
@@ -77,14 +76,6 @@ public class LobbyFragment extends Fragment {
             }
         });
 
-        binding.buttonGame.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                NavHostFragment.findNavController(LobbyFragment.this)
-                        .navigate(R.id.lobby2game_action);
-            }
-        });
-
     }
 
     private void setupRecyclerView() {
@@ -98,7 +89,7 @@ public class LobbyFragment extends Fragment {
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL);
         recyclerView.addItemDecoration(dividerItemDecoration);
 
-        mAdapter = new GameAdapter(mAuth.getUid(),mAuth.getUid() ,games, new GameAdapter.IGameRow() {
+        mAdapter = new GameAdapter(mAuth.getUid(), mAuth.getUid(), games, new GameAdapter.IGameRow() {
             @Override
             public void onGameSelected(Game game) {
 
@@ -107,7 +98,7 @@ public class LobbyFragment extends Fragment {
                 args.putString(GameFragment.GAME_TITLE, game.title);
 
                 NavHostFragment.findNavController(LobbyFragment.this)
-                                        .navigate(R.id.lobby2game_action, args);
+                        .navigate(R.id.lobby2game_action, args);
             }
         });
         recyclerView.setAdapter(mAdapter);

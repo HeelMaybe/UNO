@@ -26,19 +26,20 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    public GameAdapter(String currentUserId,String currentGameId,  List<Game> myDataset, IGameRow callback) {
+    public GameAdapter(String currentUserId, String currentGameId, List<Game> myDataset, IGameRow callback) {
         Games = myDataset;
         this.callback = callback;
         loggedUserId = currentUserId;
         gameId = currentGameId;
     }
 
-    public static class GameViewHolder extends RecyclerView.ViewHolder{
+    public static class GameViewHolder extends RecyclerView.ViewHolder {
         public Context context;
         public View root;
         public TextView tvGameName;
         public TextView tvCreatedAt;
-        public GameViewHolder(View itemView){
+
+        public GameViewHolder(View itemView) {
             super(itemView);
             context = itemView.getContext();
             root = itemView.findViewById(R.id.lytRow);
@@ -58,7 +59,7 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.GameViewHolder
     public void onBindViewHolder(GameViewHolder holder, int position) {
         PrettyTime prettyTime = new PrettyTime();
         Game game = Games.get(position);
-        holder.tvGameName.setText(game.ownerName + " : " +game.title );
+        holder.tvGameName.setText(game.ownerName + " : " + game.title);
         holder.tvCreatedAt.setText(prettyTime.format(game.createdAt));
         holder.root.setOnClickListener(new View.OnClickListener() {
             @Override

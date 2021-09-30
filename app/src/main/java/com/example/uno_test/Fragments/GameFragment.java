@@ -1,11 +1,14 @@
-package com.example.uno_test.data;
+package com.example.uno_test.Fragments;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -16,6 +19,9 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.uno_test.Adapters.DeckAdapter;
+import com.example.uno_test.R;
+import com.example.uno_test.data.Card;
+import com.example.uno_test.data.Game;
 import com.example.uno_test.databinding.FragmentGameBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -46,7 +52,8 @@ public class GameFragment extends Fragment {
     private LinearLayoutManager lmCards;
     private ArrayList<Card> player1Cards = new ArrayList<>();
     private ArrayList<Card> player2Cards = new ArrayList<>();
-
+    private AlertDialog.Builder builder;
+    private AlertDialog dialog;
     Game uno;
     private FirebaseAuth mAuth;
     final private String TAG = "demo";
@@ -79,8 +86,12 @@ public class GameFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         getCards();
-        setUpPlayer1CardRecyclerView();
-        setUpPlayer2CardRecyclerView();
+        if (!uno.status.equals("FINISHED")) {
+            setUpPlayer1CardRecyclerView();
+            setUpPlayer2CardRecyclerView();
+        }
+
+
     }
 
     private void setUpPlayer1CardRecyclerView() {
@@ -143,9 +154,10 @@ public class GameFragment extends Fragment {
         rvCards2.setAdapter(rvaCards2);
     }
 
-    private void upDateCurrentCard(String currentCard) {
+    private void updateCurrentCard(String currentCard) {
         Card topCard = new Card(currentCard);
         binding.tvTopCard.setText(topCard.getType());
+
         if (topCard.getType().equals("SKIP")) {
             binding.tvTopCard.setText(topCard.getType());
         } else if (topCard.getType().equals("DRAW4")) {
@@ -175,78 +187,80 @@ public class GameFragment extends Fragment {
                 }
                 uno = value.toObject(Game.class);
 
-                if ((uno.whosTurn == 1 && value.get("status").equals("CREATED"))) {
-                    binding.tvPlayerTurn.setText(uno.player1Name + "'s turn");
-                } else if ((uno.whosTurn == 1 && value.get("status").equals("PLAYING"))) {
-                    rvCards2.setClickable(false);
-                    binding.tvPlayerTurn.setText(uno.player1Name + "'s turn");
-                    rvCards.setClickable(true);
-                } else if (uno.whosTurn == 2) {
-                    rvCards.setClickable(false);
-                    binding.tvPlayerTurn.setText(uno.player2Name + "'s turn");
-                    rvCards2.setClickable(true);
-                }
-                binding.buttonDrawCard.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                if (!value.get("status").equals("FINISHED")) {
 
-                        if (mAuth.getCurrentUser().getUid().equals(uno.player1Id) && uno.whosTurn == 1) {
-                            //TODO add card to player1 hand
-                            DrawCardFromDeck(value, player1Cards, rvaCards);
-                        } else if (mAuth.getCurrentUser().getUid().equals(uno.player2Id) && uno.whosTurn == 2) {
-                            //TODO add card to player2 hand
-                            DrawCardFromDeck(value, player2Cards, rvaCards2);
+                    if ((uno.whosTurn == 1 && value.get("status").equals("CREATED"))) {
+                        binding.tvPlayerTurn.setText(uno.player1Name + "'s turn");
+                    } else if ((uno.whosTurn == 1 && value.get("status").equals("PLAYING"))) {
+                        rvCards2.setClickable(false);
+                        binding.tvPlayerTurn.setText(uno.player1Name + "'s turn");
+                        rvCards.setClickable(true);
+                    } else if (uno.whosTurn == 2) {
+                        rvCards.setClickable(false);
+                        binding.tvPlayerTurn.setText(uno.player2Name + "'s turn");
+                        rvCards2.setClickable(true);
+                    }
+                    binding.buttonDrawCard.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            if (mAuth.getCurrentUser().getUid().equals(uno.player1Id) && uno.whosTurn == 1) {
+                                // add card to player1 hand
+                                DrawCardFromDeck(value, player1Cards, rvaCards);
+                            } else if (mAuth.getCurrentUser().getUid().equals(uno.player2Id) && uno.whosTurn == 2) {
+                                // add card to player2 hand
+                                DrawCardFromDeck(value, player2Cards, rvaCards2);
+                            }
                         }
+                    });
+
+                    updateCurrentCard(value.get("currentCard").toString());
+                    updatePlayer2();
+                    //setPlayerOne's hand
+                    player1Cards.clear();
+                    Log.d(TAG, "onSuccess: player1CardsDeck:" + value.get("player1CardsDeck").toString());
+                    String arrayOfCards = value.get("player1CardsDeck").toString();
+                    String result = arrayOfCards.replaceAll("[\\p{Ps}\\p{Pe}]", "");
+                    Log.d(TAG, "onSuccess: player1CardsDeck result:" + result);
+                    String[] items = result.split(", ");
+                    for (int i = 0; i < items.length; i++) {
+                        Card card = new Card(items[i]);
+                        player1Cards.add(card);
                     }
-                });
-                //TODO: fix draw four method
-                    if(value.get("currentCard").equals("BLACK-DRAW4")&&uno.whosTurn == 1){
-                        Draw4CardsFromDeck(value,player2Cards,rvaCards2);
-                    }else if(value.get("currentCard").equals("BLACK-DRAW4")&&uno.whosTurn == 2){
-                        Draw4CardsFromDeck(value,player1Cards,rvaCards);
+                    if (mAuth.getCurrentUser().getUid().equals(uno.player1Id)) {
+                        rvCards2.setVisibility(View.INVISIBLE);
                     }
-                upDateCurrentCard(value.get("currentCard").toString());
-                updatePlayer2();
-                //setPlayerOne's hand
-                player1Cards.clear();
-                Log.d(TAG, "onSuccess: player1CardsDeck:" + value.get("player1CardsDeck").toString());
-                String arrayOfCards = value.get("player1CardsDeck").toString();
-                String result = arrayOfCards.replaceAll("[\\p{Ps}\\p{Pe}]", "");
-                Log.d(TAG, "onSuccess: player1CardsDeck result:" + result);
-                String[] items = result.split(", ");
-                for (int i = 0; i < items.length; i++) {
-                    Card card = new Card(items[i]);
-                    player1Cards.add(card);
+                    rvaCards.notifyDataSetChanged();
+                    //setPlayerTwo's hand
+                    player2Cards.clear();
+                    Log.d(TAG, "onSuccess: player2CardsDeck:" + value.get("player2CardsDeck").toString());
+                    String arrayOfCards2 = value.get("player2CardsDeck").toString();
+                    String result2 = arrayOfCards2.replaceAll("[\\p{Ps}\\p{Pe}]", "");
+                    Log.d(TAG, "onSuccess: player2CardsDeck result:" + result2);
+                    String[] items2 = result2.split(", ");
+                    for (int i = 0; i < items2.length; i++) {
+                        Card card = new Card(items2[i]);
+                        player2Cards.add(card);
+                    }
+                    if (mAuth.getCurrentUser().getUid().equals(uno.player2Id)) {
+                        rvCards.setVisibility(View.INVISIBLE);
+                    }
+                    rvaCards2.notifyDataSetChanged();
+                } else {
+                    EndGame();
                 }
-                if (mAuth.getCurrentUser().getUid().equals(uno.player1Id)) {
-                    rvCards2.setVisibility(View.INVISIBLE);
-                }
-                rvaCards.notifyDataSetChanged();
-                //setPlayerTwo's hand
-                player2Cards.clear();
-                Log.d(TAG, "onSuccess: player2CardsDeck:" + value.get("player2CardsDeck").toString());
-                String arrayOfCards2 = value.get("player2CardsDeck").toString();
-                String result2 = arrayOfCards2.replaceAll("[\\p{Ps}\\p{Pe}]", "");
-                Log.d(TAG, "onSuccess: player2CardsDeck result:" + result2);
-                String[] items2 = result2.split(", ");
-                for (int i = 0; i < items2.length; i++) {
-                    Card card = new Card(items2[i]);
-                    player2Cards.add(card);
-                }
-                if (mAuth.getCurrentUser().getUid().equals(uno.player2Id)) {
-                    rvCards.setVisibility(View.INVISIBLE);
-                }
-                rvaCards2.notifyDataSetChanged();
+
             }
         });
     }
 
     private void playCard(Card card) {
+        DocumentReference docRef = db.collection("games").document(gameId);
         if (mAuth.getCurrentUser().getUid().equals(uno.player1Id)) {
-            DocumentReference docRef = db.collection("games").document(gameId);
             if (card.getType().equals("SKIP")) {
                 docRef.update("player1CardsDeck", FieldValue.arrayRemove(card.getColor() + "-" + card.getType()),
-                        "whosTurn", 1)
+                        "whosTurn", 1,
+                        "floorCardsDeck", FieldValue.arrayUnion(card.getColor() + "-" + card.getType()))
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
@@ -255,16 +269,30 @@ public class GameFragment extends Fragment {
                         });
             } else if (card.getType().equals("DRAW4")) {
                 docRef.update("player1CardsDeck", FieldValue.arrayRemove(card.getColor() + "-" + card.getType()),
-                        "whosTurn", 2)
+
+                        "floorCardsDeck", FieldValue.arrayUnion(card.getColor() + "-" + card.getType()))
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
+                                docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException e) {
+                                        if (e != null) {
+                                            Log.w(TAG, "Listen failed.", e);
+                                            return;
+                                        }
+                                        // Draw4CardsFromDeck(value,player2Cards,rvaCards2);
+                                    }
+                                });
+                                docRef.update("whosTurn", 2);
+
                                 rvaCards.notifyDataSetChanged();
                             }
                         });
             } else {
                 docRef.update("player1CardsDeck", FieldValue.arrayRemove(card.getColor() + "-" + card.getType()),
-                        "whosTurn", 2)
+                        "whosTurn", 2,
+                        "floorCardsDeck", FieldValue.arrayUnion(card.getColor() + "-" + card.getType()))
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
@@ -273,10 +301,10 @@ public class GameFragment extends Fragment {
                         });
             }
         } else if (mAuth.getCurrentUser().getUid().equals(uno.player2Id)) {
-            DocumentReference docRef = db.collection("games").document(gameId);
             if (card.getType().equals("SKIP")) {
                 docRef.update("player2CardsDeck", FieldValue.arrayRemove(card.getColor() + "-" + card.getType()),
-                        "whosTurn", 2)
+                        "whosTurn", 2,
+                        "floorCardsDeck", FieldValue.arrayUnion(card.getColor() + "-" + card.getType()))
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
@@ -285,16 +313,29 @@ public class GameFragment extends Fragment {
                         });
             } else if (card.getType().equals("DRAW4")) {
                 docRef.update("player1CardsDeck", FieldValue.arrayRemove(card.getColor() + "-" + card.getType()),
-                        "whosTurn", 1)
+
+                        "floorCardsDeck", FieldValue.arrayUnion(card.getColor() + "-" + card.getType()))
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
-                                rvaCards.notifyDataSetChanged();
+                                docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException e) {
+                                        if (e != null) {
+                                            Log.w(TAG, "Listen failed.", e);
+                                            return;
+                                        }
+                                        //Draw4CardsFromDeck(value,player1Cards,rvaCards);
+                                    }
+                                });
+                                docRef.update("whosTurn", 1);
+                                rvaCards2.notifyDataSetChanged();
                             }
                         });
             } else {
                 docRef.update("player2CardsDeck", FieldValue.arrayRemove(card.getColor() + "-" + card.getType()),
-                        "whosTurn", 1)
+                        "whosTurn", 1,
+                        "floorCardsDeck", FieldValue.arrayUnion(card.getColor() + "-" + card.getType()))
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
@@ -303,6 +344,16 @@ public class GameFragment extends Fragment {
                         });
             }
         }
+        docRef.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (value.get("player1CardsDeck").equals("") || value.get("player2CardsDeck").equals("") && uno.status.equals("PLAYING")) {
+                    docRef.update("status", "FINISHED");
+                }
+            }
+        });
+
+
     }
 
     private void updatePlayer2() {
@@ -337,7 +388,7 @@ public class GameFragment extends Fragment {
         //get index 0 card string
         //convert to card
         Card card = new Card(items[0]);
-        //remove card from floordeck
+        //remove card from floor deck
         DocumentReference docRef = db.collection("games").document(gameId);
         docRef.update("floorCardsDeck", FieldValue.arrayRemove(card.getColor() + "-" + card.getType()));
         //check to see if card can be played
@@ -366,7 +417,37 @@ public class GameFragment extends Fragment {
         }
     }
 
+    private void DrawCardsFromDeck(DocumentSnapshot value, ArrayList<Card> playerCards, DeckAdapter adapter) {
+        //get floor deck
+        String arrayOfCards = value.get("floorCardsDeck").toString();
+        String result = arrayOfCards.replaceAll("[\\p{Ps}\\p{Pe}]", "");
+        Log.d(TAG, "onSuccess: floorCardsDeck result:" + result);
+        String[] items = result.split(", ");
+        //get index 0 card string
+        //convert to card
+        Card card = new Card(items[0]);
+        //remove card from floordeck
+        DocumentReference docRef = db.collection("games").document(gameId);
+        docRef.update("floorCardsDeck", FieldValue.arrayRemove(card.getColor() + "-" + card.getType()));
+        //no-put in players hand
+        if (uno.whosTurn == 1) {
+            db.collection("games").document(gameId).update("player1CardsDeck", FieldValue.arrayUnion(card.getColor() + "-" + card.getType()));
+            playerCards.add(card);
+        } else if (uno.whosTurn == 2) {
+            db.collection("games").document(gameId).update("player2CardsDeck", FieldValue.arrayUnion(card.getColor() + "-" + card.getType()));
+            playerCards.add(card);
+        }
+    }
+
     private void Draw4CardsFromDeck(DocumentSnapshot value, ArrayList<Card> playerCards, DeckAdapter adapter) {
+        DrawCardsFromDeck(value, playerCards, adapter);
+        DrawCardsFromDeck(value, playerCards, adapter);
+        DrawCardsFromDeck(value, playerCards, adapter);
+        DrawCardsFromDeck(value, playerCards, adapter);
+        adapter.notifyDataSetChanged();
+    }
+
+    private void Draw4CardsFromDeckLoop(DocumentSnapshot value, ArrayList<Card> playerCards, DeckAdapter adapter) {
         //get floor deck
         String arrayOfCards = value.get("floorCardsDeck").toString();
         String result = arrayOfCards.replaceAll("[\\p{Ps}\\p{Pe}]", "");
@@ -374,25 +455,59 @@ public class GameFragment extends Fragment {
         String[] items = result.split(", ");
         //get index 0-3 card string
         //convert to card
+        DocumentReference docRef = db.collection("games").document(gameId);
         for (int i = 0; i < 4; i++) {
             if (items.length > 4) {
-                Card card = new Card(items[0]);
-                DocumentReference docRef = db.collection("games").document(gameId);
+                Card card = new Card(items[i]);
                 docRef.update("floorCardsDeck", FieldValue.arrayRemove(card.getColor() + "-" + card.getType()));
                 if (value.get("whosTurn").equals(1)) {
-                    db.collection("games").document(gameId).update("player2CardsDeck", FieldValue.arrayUnion(card.getColor() + "-" + card.getType()));
+                    db.collection("games").document(gameId).update("player2CardsDeck",
+                            FieldValue.arrayUnion(card.getColor() + "-" + card.getType()));
                     playerCards.add(card);
-                    docRef.update("whosTurn", 2);
                 } else if (value.get("whosTurn").equals(2)) {
-                    db.collection("games").document(gameId).update("player1CardsDeck", FieldValue.arrayUnion(card.getColor() + "-" + card.getType()));
+                    db.collection("games").document(gameId).update("player1CardsDeck",
+                            FieldValue.arrayUnion(card.getColor() + "-" + card.getType()));
                     playerCards.add(card);
-                    docRef.update("whosTurn", 1);
                 }
             }
+        }
+        if (value.get("whosTurn").equals(1)) {
+            docRef.update("whosTurn", 2);
+        } else if (value.get("whosTurn").equals(2)) {
+            docRef.update("whosTurn", 1);
         }
         adapter.notifyDataSetChanged();
     }
 
+    private void EndGame(){
+        if (player1Cards.isEmpty()) {
+            builder = new AlertDialog.Builder(getContext());
+            builder.setView(binding.getRoot())
+                    .setMessage(uno.player1Name + "is the Winner")
+                    .setPositiveButton("Go to Lobby", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            NavHostFragment.findNavController(GameFragment.this)
+                                    .navigate(R.id.game2lobby_action);
+                        }
+                    });
+            dialog = builder.create();
+            dialog.show();
+        } else if (player2Cards.isEmpty()) {
+            builder = new AlertDialog.Builder(getContext());
+            builder.setView(binding.getRoot())
+                    .setMessage(uno.player2Name + "is the Winner")
+                    .setPositiveButton("Go to Lobby", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            NavHostFragment.findNavController(GameFragment.this)
+                                    .navigate(R.id.game2lobby_action);
+                        }
+                    });
+            dialog = builder.create();
+            dialog.show();
+        }
+    }
     private boolean isGameFinished() {
         if (player1Cards.size() == 0 || player2Cards.size() == 0 && uno.status.equals("PLAYING")) {
             DocumentReference docRef = db.collection("games").document(gameId);

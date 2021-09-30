@@ -99,7 +99,7 @@ public class RegisterFragment extends Fragment {
 
     private void addUser(String name){
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        Map<String, String > user = new HashMap<>();
+        Map<String, String> user = new HashMap<>();
         user.put("name", name);
         user.put("id", mAuth.getCurrentUser().getUid());
         db.collection("users")

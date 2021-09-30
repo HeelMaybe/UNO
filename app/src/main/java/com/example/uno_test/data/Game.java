@@ -1,5 +1,8 @@
 package com.example.uno_test.data;
 
+import com.google.firebase.firestore.Exclude;
+import com.google.firebase.firestore.IgnoreExtraProperties;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,8 +21,11 @@ public class Game implements Serializable {
     public String currentCard;
     public String player1Id, player1Name;
     public String player2Id, player2Name;
-    public String status = "CREATED"; //CREATED, STARTED, ENDED
+    public String status = "CREATED"; //CREATED, PLAYING, FINISHED
     public int whosTurn = 1;
+
+    @Exclude
+    public int whoIsTheCurrentUser = -1;
 
 
     public Date createdAt;
@@ -84,6 +90,23 @@ public class Game implements Serializable {
             player2CardsDeck.add(floorCardsDeck.remove(0));
         }
     }
+
+    public void setupWhichUser(String uid){
+        if(this.player1Id.equals(uid)){
+            whoIsTheCurrentUser = 1;
+        } else {
+            whoIsTheCurrentUser = 2;
+        }
+    }
+
+    public ArrayList<String> getMycards(){
+        if(whoIsTheCurrentUser == 1){
+            return this.player1CardsDeck;
+        }
+        return this.player2CardsDeck;
+    }
+
+
 
 }
 

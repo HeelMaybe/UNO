@@ -53,22 +53,23 @@ public class DeckAdapter extends RecyclerView.Adapter<DeckAdapter.DeckViewHolder
     public void onBindViewHolder(@NonNull DeckViewHolder holder, int position) {
         Card card = cards.get(position);
         String type = card.getType();
+
         holder.tvCardValue.setText(type);
-        if(card.getType().equals("SKIP")){
+        if (card.getType().equals("SKIP")) {
             holder.tvCardValue.setText(type);
-        }else if(card.getType().equals("DRAW4")){
+        } else if (card.getType().equals("DRAW4")) {
             holder.tvCardValue.setText("+4");
         }
 
-        if(card.getColor().equals("RED")){
+        if (card.getColor().equals("RED")) {
             holder.cardView.setCardBackgroundColor(Color.RED);
-        }else if(card.getColor().equals("GREEN")){
+        } else if (card.getColor().equals("GREEN")) {
             holder.cardView.setCardBackgroundColor(Color.GREEN);
-        }else if(card.getColor().equals("YELLOW")){
+        } else if (card.getColor().equals("YELLOW")) {
             holder.cardView.setCardBackgroundColor(Color.YELLOW);
-        }else if(card.getColor().equals("BLUE")){
+        } else if (card.getColor().equals("BLUE")) {
             holder.cardView.setCardBackgroundColor(Color.BLUE);
-        }else if(card.getType().equals("DRAW4")){
+        } else if (card.getType().equals("DRAW4")) {
             holder.cardView.setCardBackgroundColor(Color.BLACK);
         }
 

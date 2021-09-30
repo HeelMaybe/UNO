@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".data.GameFragment">
+    tools:context=".Fragments.GameFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <Button

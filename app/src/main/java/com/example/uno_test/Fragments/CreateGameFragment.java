@@ -14,8 +14,6 @@ import android.view.ViewGroup;
 
 import com.example.uno_test.R;
 import com.example.uno_test.data.Game;
-import com.example.uno_test.data.GameFragment;
-import com.example.uno_test.data.Player;
 import com.example.uno_test.databinding.FragmentCreateGameBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -70,8 +68,6 @@ public class CreateGameFragment extends Fragment {
                         Log.d(TAG, "DocumentSnapshot data: " + document.getData());
                         creatorName = document.get("name").toString();
                         ownerId = document.get("id").toString();
-                        //FirebaseAuth.getInstance().getCurrentUser().getUid()
-
                         String title = binding.etTitle.getText().toString();
                         DocumentReference docRef = db.collection("games").document();
                         Game newGame = new Game(docRef.getId(), creatorName,ownerId,title);
